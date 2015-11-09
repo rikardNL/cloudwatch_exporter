@@ -14,12 +14,17 @@ public class WebServer {
      }
      CloudWatchCollector cc = new CloudWatchCollector(new FileReader(args[1])).register();
 
+     String metricPath = System.getenv("WEB_METRIC_PATH");
+     if (metricPath == null) {
+       metricPath = "/";
+     }
+
      int port = Integer.parseInt(args[0]);
      Server server = new Server(port);
      ServletContextHandler context = new ServletContextHandler();
-     context.setContextPath("/");
+     context.setContextPath(metricPath);
      server.setHandler(context);
-     context.addServlet(new ServletHolder(new MetricsServlet()), "/metrics");
+     context.addServlet(new ServletHolder(new MetricsServlet()), "/");
      server.start();
      server.join();
    }
